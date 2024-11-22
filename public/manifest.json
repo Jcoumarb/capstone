@@ -1,0 +1,16 @@
+{
+	"name": "Locked In",
+	"version": "1.0",
+	"description": "This extention gamifies productivity via a points system",
+	"manifest_version": 3,
+	"background": {
+		"service_worker": "background.js"
+	},
+	"author": "Jahfari Coumarbatch",
+	"action": {
+		"default_popup": "index.html",
+		"default_title": "Locked In"
+	},
+	"permissions": ["alarms", "storage", "idle","tabs"],
+	"host_permissions": ["<all_urls>"]
+}
