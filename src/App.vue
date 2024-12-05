@@ -7,20 +7,32 @@
 			<p id="counter">{{ counter }}</p>
 			<h2>currency(placeholder)</h2>
 			<button id="mode" @click="toggleMode">{{ mode }}</button>
+			<button @click="toggleBlacklistManager">
+				{{ showBlacklistManager ? "Close" : "Edit Blacklist" }}
+			</button>
+			<BlacklistManager v-if="showBlacklistManager" />
 		</main>
 	</div>
 </template>
 
 <script>
+import BlacklistManager from "./BlacklistManager.vue";
+
 export default {
+	components: { BlacklistManager },
 	data() {
 		return {
 			isActive: false,
 			counter: 0,
 			mode: "Enter Work Mode",
+			coin: new Audio(chrome.runtime.getURL("point_increase.wav")),
+			showBlacklistManager: false,
 		};
 	},
 	methods: {
+		toggleBlacklistManager() {
+			this.showBlacklistManager = !this.showBlacklistManager;
+		},
 		endSession() {
         		// Send a message to the background script to reset the counter
         		chrome.runtime.sendMessage({ action: 'resetCounter' }, (response) => {
@@ -55,6 +67,9 @@ export default {
     		chrome.storage.onChanged.addListener((changes) => {
       			if (changes.counter) {
         			this.counter = changes.counter.newValue;
+				if(this.counter != 0) {
+					this.coin.play();
+				}
       			}
     		});
 	},
