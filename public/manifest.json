@@ -9,8 +9,15 @@
 	"author": "Jahfari Coumarbatch",
 	"action": {
 		"default_popup": "index.html",
-		"default_title": "Locked In"
+		"default_title": "Locked In",
+		"default_icon": "lockedIn.png"
 	},
-	"permissions": ["alarms", "storage", "idle","tabs"],
-	"host_permissions": ["<all_urls>"]
+	"permissions": ["alarms", "storage", "idle","tabs", "notifications"],
+	"host_permissions": ["<all_urls>"],
+	"web_accessible_resources": [
+		{
+			"resources": ["lockedIn.webp"],
+			"matches": ["<all_urls>"]
+		}
+	]
 }

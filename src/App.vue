@@ -25,7 +25,6 @@ export default {
 			isActive: false,
 			counter: 0,
 			mode: "Enter Work Mode",
-			coin: new Audio(chrome.runtime.getURL("point_increase.wav")),
 			showBlacklistManager: false,
 		};
 	},
@@ -67,9 +66,6 @@ export default {
     		chrome.storage.onChanged.addListener((changes) => {
       			if (changes.counter) {
         			this.counter = changes.counter.newValue;
-				if(this.counter != 0) {
-					this.coin.play();
-				}
       			}
     		});
 	},
