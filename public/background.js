@@ -18,6 +18,38 @@ function isBlacklisted(url, callback) {
     });
 }
 
+//function to create notification on point decrease
+function decreaseNotification() {
+	const id = "notif"
+
+	chrome.notifications.create(
+		id,
+		{
+			type:"basic",
+			iconUrl: "lockedIn.png",
+			title: "You Need to Locked In!",
+			message: "You've visited a distracting website! Stay on task to gain points!"
+		},
+		(notificationId) => {
+			if(chrome.runtime.lastError) {
+				console.error("Notification error:", chrome.runtime.lastError.message);
+			} else {
+				console.log("Notification created with ID:", notificationId);
+			}
+		}
+	);
+
+	setTimeout(() => {
+        	chrome.notifications.clear(id, (wasCleared) => {
+            		if (wasCleared) {
+                		console.log(`Notification ${id} cleared`);
+            		} else {
+                		console.log(`Failed to clear notification ${id}`);
+            		}
+        	});
+    	}, 5000);
+}
+
 // Decrement the counter if a blacklisted URL is visited
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.url) {
@@ -30,10 +62,12 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 		    
 		    if(!data.isActive) return;
                     const currentCounter = typeof data.counter === "number" ? data.counter : 0;
-                    const updatedCounter = currentCounter - 1;
+                    const updatedCounter = currentCounter - 2;
 
                     chrome.storage.local.set({ counter: updatedCounter }, () => {
                         console.log("Counter decremented. New value:", updatedCounter);
+
+			decreaseNotification();
                     });
                 });
             }
@@ -47,6 +81,37 @@ chrome.runtime.onInstalled.addListener(() => {
         console.log('Initialized: Mode off, counter at 0.');
     });
 });
+
+//function to create notification on point increase
+function increaseNotification() {
+	const id = 'notif2'
+	chrome.notifications.create(
+		id,
+		{
+			type:"basic",
+			iconUrl: "lockedIn.png",
+			title: "You're Locked In!",
+			message: "Great focus! Keep up the good work to gain more points!"
+		},
+		(notificationId) => {
+			if(chrome.runtime.lastError) {
+				console.error("Notification error:", chrome.runtime.lastError.message);
+			} else {
+				console.log("Notification created with ID:", notificationId);
+			}
+		}
+	);
+
+	setTimeout(() => {
+        	chrome.notifications.clear(id, (wasCleared) => {
+            		if (wasCleared) {
+                		console.log(`Notification ${id} cleared`);
+            		} else {
+                		console.log(`Failed to clear notification ${id}`);
+            		}
+        	});
+    	}, 5000);
+}
 
 // Logic for incrementing points when work mode is active
 chrome.alarms.onAlarm.addListener((alarm) => {
@@ -65,6 +130,8 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                     const newCounter = (data.counter || 0) + 1;
                     chrome.storage.local.set({ counter: newCounter }, () => {
                         console.log(`Counter incremented to: ${newCounter}`);
+
+			increaseNotification();
                     });
                 } else {
                     console.log(`System idle (${state}), skipping increment.`);
@@ -74,7 +141,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     }
 });
 
-// Toggle work mode (active/inactive)
+// Toggle work mode (active/inactive) and create timer if active
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === 'toggleMode') {
         chrome.storage.local.get('isActive', (data) => {
@@ -82,7 +149,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             chrome.storage.local.set({ isActive: newMode }, () => {
                 console.log(`Mode changed: ${newMode ? 'Active' : 'Inactive'}`);
                 if (newMode) {
-                    chrome.alarms.create('incrementCounter', { periodInMinutes:  0.1});
+                    chrome.alarms.create('incrementCounter', { periodInMinutes:  0.5});
                 } else {
                     chrome.alarms.clear('incrementCounter');
                 }
