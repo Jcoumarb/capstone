@@ -1,6 +1,6 @@
 # capstone
 
-- This is Chrome browser extension that meant to gamify productivity
+- This is a Chrome browser extension that gamifies productivity
 - It implements a point system that increments every 5 minutes of work
 - Points are reduced for visiting distracting websites that are enumerated in a modifiable blacklist
 - There is also a scheduled break every 30 minutes where the user can visit distracting websites without point loss
