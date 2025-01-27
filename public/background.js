@@ -27,7 +27,7 @@ function decreaseNotification() {
 		{
 			type:"basic",
 			iconUrl: "lockedIn.png",
-			title: "You Need to Locked In!",
+			title: "You Need to Lock In!",
 			message: "You've visited a distracting website! Stay on task to gain points!"
 		},
 		(notificationId) => {
