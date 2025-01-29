@@ -58,7 +58,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 console.log("Blacklisted URL visited:", changeInfo.url);
 
                 // Decrement counter
-                chrome.storage.local.get({ counter: 0 , isActive: false}, (data) => {
+                chrome.storage.local.get({ counter: 0 , isActive: false, muted: false}, (data) => {
 		    
 		    if(!data.isActive) return;
                     const currentCounter = typeof data.counter === "number" ? data.counter : 0;
@@ -67,7 +67,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     chrome.storage.local.set({ counter: updatedCounter }, () => {
                         console.log("Counter decremented. New value:", updatedCounter);
 
-			decreaseNotification();
+			if (!data.muted) decreaseNotification();
                     });
                 });
             }
@@ -77,7 +77,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Initialize local storage for work mode, counter, and blacklist on installation
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ isActive: false, counter: 0 , blacklist: [] }, () => {
+    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0}, () => {
         console.log('Initialized: Mode off, counter at 0.');
     });
 });
@@ -118,7 +118,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === 'incrementCounter') {
         console.log('Alarm triggered: incrementCounter');
 
-        chrome.storage.local.get(['isActive', 'counter'], (data) => {
+        chrome.storage.local.get(['isActive', 'counter', 'muted'], (data) => {
             if (!data.isActive) {
                 console.log('Mode is inactive, skipping increment.');
                 return;
@@ -131,7 +131,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                     chrome.storage.local.set({ counter: newCounter }, () => {
                         console.log(`Counter incremented to: ${newCounter}`);
 
-			increaseNotification();
+			if (!data.muted) increaseNotification();
                     });
                 } else {
                     console.log(`System idle (${state}), skipping increment.`);
@@ -158,6 +158,20 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         });
         return true; // Required for async response
     }
+});
+
+//toggle mute which will allow/disallow notifications of point gain and loss
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+	if(message.action === 'toggleMute') {
+		chrome.storage.local.get('muted', (data) => {
+			const newMute = !data.muted;
+			chrome.storage.local.set({muted: newMute}, () => {
+				console.log(`Mute set: ${newMute}`);
+				sendResponse({success: true, muted: newMute});
+			});
+		});
+		return true;
+	}
 });
 
 // Reset the counter

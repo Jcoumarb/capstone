@@ -7,9 +7,8 @@
 			<p id="counter">{{ counter }}</p>
 			<h2>currency(placeholder)</h2>
 			<button id="mode" @click="toggleMode">{{ mode }}</button>
-			<button @click="toggleBlacklistManager">
-				{{ showBlacklistManager ? "Close" : "Edit Blacklist" }}
-			</button>
+			<button @click="toggleBlacklistManager">{{ showBlacklistManager ? "Close" : "Edit Blacklist" }}</button>
+			<button id="mute" @click="toggleMute">{{ muted ? "Unmute" : "Mute"}}</button>
 			<BlacklistManager v-if="showBlacklistManager" />
 		</main>
 	</div>
@@ -26,6 +25,10 @@ export default {
 			counter: 0,
 			mode: "Enter Work Mode",
 			showBlacklistManager: false,
+			muted: false,
+			onBreak: false,
+			highScore: 0,
+
 		};
 	},
 	methods: {
@@ -43,10 +46,13 @@ export default {
         		});
     		},
 		fetchStatus() {
-      			chrome.storage.local.get(['isActive', 'counter'], (data) => {
+      			chrome.storage.local.get(['isActive', 'counter', 'mute', 'onBreak', 'highScore'], (data) => {
         			this.isActive = data.isActive || false;
         			this.counter = data.counter || 0;
         			this.mode = this.isActive ? "Exit Work Mode" : "Enter Work Mode";
+				this.muted = data.muted || false;
+				this.onBreak = data.onBreak || false;
+				this.highScore = data.highScore || 0;
      	 		});
     		},
     		toggleMode() {
@@ -59,6 +65,13 @@ export default {
 
       			});
     		},
+		toggleMute() {
+			chrome.runtime.sendMessage({ action: "toggleMute" }, (response) => {
+				if (response.success) {
+					this.muted = response.muted;
+				}
+			});
+		},
 	},
   	mounted() {
     		this.fetchStatus();
