@@ -1,14 +1,20 @@
 <template>
 	<div id="app">
 		<header>
-			<h1>Locked In</h1>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		</header>
 		<main>
+			<h1>Locked In</h1>
+
 			<p id="counter">{{ counter }}</p>
 			<h2>currency(placeholder)</h2>
+
 			<button id="mode" @click="toggleMode">{{ mode }}</button>
+
 			<button @click="toggleBlacklistManager">{{ showBlacklistManager ? "Close" : "Edit Blacklist" }}</button>
+
 			<button id="mute" @click="toggleMute">{{ muted ? "Unmute" : "Mute"}}</button>
+
 			<BlacklistManager v-if="showBlacklistManager" />
 		</main>
 	</div>
@@ -86,6 +92,16 @@ export default {
 </script>
 
 <style scoped>
+html, body {
+	box-sizing: border-box;
+	width: 350px;
+	height: 500px;
+	margin: 0px;
+	padding: 0;
+	overflow: hidden;
+	background-color: transparent;
+}
+
 #app {
 	display: flex;
 	flex-direction: column;
@@ -93,6 +109,7 @@ export default {
 	background-color: #b0b0b0;
 	width: 300px;
 	height: 400px;
+	overflow-y: auto;
 }
 
 #counter {
