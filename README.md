@@ -17,3 +17,7 @@ To run this extension in your browser, you will need to take the generated 'dist
 
 [Instructions](https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world#load-unpacked)
 
+## Credit
+
+Logo art by Sheldon Marshall [Link to his github](https://github.com/Sheldonwm101)
+
