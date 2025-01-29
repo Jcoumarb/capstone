@@ -67,7 +67,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     chrome.storage.local.set({ counter: updatedCounter }, () => {
                         console.log("Counter decremented. New value:", updatedCounter);
 
-			if (!muted) decreaseNotification();
+			if (!data.muted) decreaseNotification();
                     });
                 });
             }
@@ -131,7 +131,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                     chrome.storage.local.set({ counter: newCounter }, () => {
                         console.log(`Counter incremented to: ${newCounter}`);
 
-			if (!muted) increaseNotification();
+			if (!data.muted) increaseNotification();
                     });
                 } else {
                     console.log(`System idle (${state}), skipping increment.`);

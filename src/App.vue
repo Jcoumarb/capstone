@@ -8,7 +8,7 @@
 			<h2>currency(placeholder)</h2>
 			<button id="mode" @click="toggleMode">{{ mode }}</button>
 			<button @click="toggleBlacklistManager">{{ showBlacklistManager ? "Close" : "Edit Blacklist" }}</button>
-			<button id="mute" @click="toggleMute">{{ mute ? "Unmute" : "Mute"}}</button>
+			<button id="mute" @click="toggleMute">{{ muted ? "Unmute" : "Mute"}}</button>
 			<BlacklistManager v-if="showBlacklistManager" />
 		</main>
 	</div>
