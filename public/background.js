@@ -79,7 +79,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   }
 });
 
-// Initialize local storage for work mode, counter, and blacklist on installation
+// Initialize local storage of all variables
 chrome.runtime.onInstalled.addListener(() => {
   chrome.storage.local.set(
     {
@@ -89,6 +89,7 @@ chrome.runtime.onInstalled.addListener(() => {
       muted: false,
       onBreak: false,
       highScore: 0,
+      highScoreNotified: false,
     },
     () => {
       console.log("Initialized: Mode off, counter at 0.");
@@ -127,13 +128,44 @@ function increaseNotification() {
   }, 5000);
 }
 
+//function to create notification on point increase
+function highScoreNotification() {
+  const id = "notif3";
+  chrome.notifications.create(
+    id,
+    {
+      type: "basic",
+      iconUrl: "lockedIn.png",
+      title: "You've Reached a New High Score!",
+      message:
+        "Great job on the sustained focus! Keep up the good work to gain more points!",
+    },
+    (notificationId) => {
+      if (chrome.runtime.lastError) {
+        console.error("Notification error:", chrome.runtime.lastError.message);
+      } else {
+        console.log("Notification created with ID:", notificationId);
+      }
+    }
+  );
+
+  setTimeout(() => {
+    chrome.notifications.clear(id, (wasCleared) => {
+      if (wasCleared) {
+        console.log(`Notification ${id} cleared`);
+      } else {
+        console.log(`Failed to clear notification ${id}`);
+      }
+    });
+  }, 5000);
+}
 // Logic for incrementing points when work mode is active
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "incrementCounter") {
     console.log("Alarm triggered: incrementCounter");
 
     chrome.storage.local.get(
-      ["isActive", "counter", "muted", "highScore"],
+      ["isActive", "counter", "muted", "highScore", "highScoreNotified"],
       (data) => {
         if (!data.isActive) {
           console.log("Mode is inactive, skipping increment.");
@@ -143,19 +175,32 @@ chrome.alarms.onAlarm.addListener((alarm) => {
         // Check the idle state
         chrome.idle.queryState(60, (state) => {
           if (state === "active") {
+            //increase counter
             const newCounter = (data.counter || 0) + 1;
             chrome.storage.local.set({ counter: newCounter }, () => {
               console.log(`Counter incremented to: ${newCounter}`);
-
-              if (!data.muted) increaseNotification();
             });
 
+            //if there is a new high score, it is set and notified
             if (newCounter > data.highScore) {
               chrome.storage.local.set({ highScore: newCounter }, () => {
                 console.log(`New high score of ${newCounter}`);
               });
+
+              if (!data.highScoreNotified && !data.muted) {
+                highScoreNotification();
+
+                chrome.storage.local.set({ highScoreNotified: true }, () => {
+                  console.log("HighScoreNotified set true");
+                });
+              } else if (!data.muted) {
+                increaseNotification();
+              }
+            } else if (!data.muted) {
+              increaseNotification();
             }
           } else {
+            //skips increment if chrome is idle
             console.log(`System idle (${state}), skipping increment.`);
           }
         });
@@ -197,13 +242,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-// Reset the counter
+// Reset the counter and highScoreNotified at the end of session
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "resetCounter") {
     chrome.storage.local.set({ counter: 0 }, () => {
       console.log("Counter reset to zero.");
       sendResponse({ success: true });
     });
+
+    chrome.storage.local.set({ highScoreNotified: false }, () => {
+      console.log("highScoreNotified set false");
+    });
+
     return true;
   }
 });
