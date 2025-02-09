@@ -20,9 +20,9 @@
 export default {
   data() {
     return {
-      blacklist: [],       // Holds the current blacklist
+      blacklist: [], // Holds the current blacklist
       newBlacklistUrl: "", // Holds the URL to add to the blacklist
-      counter: 0,          // Holds the current counter value
+      counter: 0, // Holds the current counter value
     };
   },
   mounted() {
@@ -47,22 +47,28 @@ export default {
     // Add a URL to the blacklist
     addToBlacklist(url) {
       if (url) {
-        chrome.runtime.sendMessage({ action: "addToBlacklist", url }, (response) => {
-          if (response.success) {
-            this.fetchBlacklist(); // Refresh blacklist after addition
-	    this.newBlacklistUrl = "";
+        chrome.runtime.sendMessage(
+          { action: "addToBlacklist", url },
+          (response) => {
+            if (response.success) {
+              this.fetchBlacklist(); // Refresh blacklist after addition
+              this.newBlacklistUrl = "";
+            }
           }
-        });
+        );
       }
     },
 
     // Remove a URL from the blacklist
     removeFromBlacklist(url) {
-      chrome.runtime.sendMessage({ action: "removeFromBlacklist", url }, (response) => {
-        if (response.success) {
-          this.fetchBlacklist(); // Refresh blacklist after removal
+      chrome.runtime.sendMessage(
+        { action: "removeFromBlacklist", url },
+        (response) => {
+          if (response.success) {
+            this.fetchBlacklist(); // Refresh blacklist after removal
+          }
         }
-      });
+      );
     },
   },
   watch: {
