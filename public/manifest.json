@@ -12,11 +12,11 @@
 		"default_title": "Locked In",
 		"default_icon": "lockedIn.png"
 	},
-	"permissions": ["alarms", "storage", "idle","tabs", "notifications"],
+	"permissions": ["alarms", "storage", "idle","tabs", "notifications", "scripting", "offscreen"],
 	"host_permissions": ["<all_urls>"],
 	"web_accessible_resources": [
 		{
-			"resources": ["lockedIn.webp"],
+			"resources": ["lockedIn.webp", "coinIncrease.mp3", "highScore.mp3", "pointLoss.mp3"],
 			"matches": ["<all_urls>"]
 		}
 	]
