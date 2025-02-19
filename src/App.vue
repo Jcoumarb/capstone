@@ -4,7 +4,7 @@
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </header>
         <main>
-            <h1>Locked In</h1>
+            <h1>LOCKED IN</h1>
 
             <div class="num-row">
                 <div id="count">
@@ -29,8 +29,8 @@
                     <img class="muteIcon" v-if="muted" src="./images/muted.png" />
                     <img class="muteIcon" v-if="!muted" src="./images/unmuted.png" />
                 </button>
-                <button @click="toggleBlacklistManager">
-                    {{ showBlacklistManager ? "Close" : "Edit Blacklist" }}
+                <button id="showBlack" @click="toggleBlacklistManager">
+                    {{ showBlacklistManager ? "MINIMIZE DISTRACTIONS" : "EDIT DISTRACTIONS" }}
                 </button>
             </div>
 
@@ -75,7 +75,7 @@ export default {
         (data) => {
           this.isActive = data.isActive || false;
           this.counter = data.counter || 0;
-          this.mode = this.isActive ? "End Session" : "Begin Work";
+          this.mode = this.isActive ? "END SESSION" : "BEGIN WORK";
           this.muted = data.muted || false;
           this.onBreak = data.onBreak || false;
           this.highScore = data.highScore || 0;
@@ -86,7 +86,7 @@ export default {
       chrome.runtime.sendMessage({ action: "toggleMode" }, (response) => {
         if (response.success) {
           this.isActive = response.mode;
-          this.mode = this.isActive ? "End Session" : "Begin Work";
+          this.mode = this.isActive ? "END SESSION" : "BEGIN WORK";
           this.isActive ? null : this.endSession();
         }
       });
@@ -235,7 +235,7 @@ img {
     font-weight: bold;
     margin-top: 10px;
     margin-bottom: 10px;
-    box-shadow: inset 2px -6px 6px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 4px -8px 3px rgba(0, 0, 0, 0.5);
     transition: all 0.2s ease-in-out;
     border: none;
     outline: none;
@@ -248,6 +248,7 @@ img {
 #options {
     display: flex;
     justify-content: center;
+    margin-top: 10px;
 }
 
 #mute {
@@ -259,13 +260,27 @@ img {
 }
 
 #muteIcon {
-    height: 10px;
+    max-height: 15px;
     width: auto;
     transition: all 0.2 ease-in-out;
+    cursor: pointer;
 }
 
-#muteIcon:hover {
-    opacity: 0.5;
+#mute:hover {
+    opacity: 0.8;
 }
 
+#showBlack {
+    width: 120px;
+    height: 45px;
+    background: none;
+    outline: none;
+    color: white;
+    border-radius: 5px;
+    border: 2px solid white;
+}
+
+#showBlack:hover {
+    opacity: 0.8;
+}
 </style>
