@@ -72,7 +72,7 @@ export default {
         (data) => {
           this.isActive = data.isActive || false;
           this.counter = data.counter || 0;
-          this.mode = this.isActive ? "Exit Work Mode" : "Enter Work Mode";
+          this.mode = this.isActive ? "End Session" : "Begin Work";
           this.muted = data.muted || false;
           this.onBreak = data.onBreak || false;
           this.highScore = data.highScore || 0;
@@ -83,7 +83,7 @@ export default {
       chrome.runtime.sendMessage({ action: "toggleMode" }, (response) => {
         if (response.success) {
           this.isActive = response.mode;
-          this.mode = this.isActive ? "Exit Work Mode" : "Enter Work Mode";
+          this.mode = this.isActive ? "End Session" : "Begin Work";
           this.isActive ? null : this.endSession();
         }
       });
@@ -116,109 +116,125 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
 
 * {
-  font-family: "Electrolize", serif;
+    font-family: "Electrolize", serif;
 }
 
-html,
-body {
-  box-sizing: border-box;
-  width: 350px;
-  height: 500px;
-  margin: 0px;
-  padding: 0;
-  overflow: hidden;
-  background-color: transparent;
-  border-radius: 10px;
-}
+/*
+html, body {
+    box-sizing: border-box;
+    width: 350px;
+    height: 400px;
+    margin: 0px;
+    padding: 0;
+    overflow: hidden;
+    background-color: transparent;
+    border-radius: 10px;
+} */
 
 #app {
-  display: flex;
-  flex-direction: column;
-  /*justify-content: center;*/
-  background-color: #374971;
-  width: 300px;
-  height: 400px;
-  overflow-y: auto;
-  margin-left: 0;
+    display: flex;
+    flex-direction: column;
+    /*justify-content: center;*/
+    background-color: #374971;
+    width: 300px;
+    height: 300px;
+    overflow-y: auto;
+    margin-left: 0;
 }
 
 #counter {
-  font-size: 70px;
-  color: #00d4ff;
-  font-weight: bold;
-  background: linear-gradient(45deg, #00d4ff 70%, #7a00ff 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+    font-size: 70px;
+    color: #00d4ff;
+    font-weight: bold;
+    background: linear-gradient(45deg, #00d4ff 70%, #7a00ff 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
 }
 
 #counterLabel {
-  font-size: 10px;
-  color: white;
-  margin-right: 50px;
+    font-size: 12px;
+    color: white;
+    margin-right: 50px;
 }
 
 main {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 h1 {
-  color: white;
-  border-radius: 10px;
-  font-size: 30px;
-  margin-bottom: 0;
-  padding-bottom: 0;
+    color: white;
+    border-radius: 10px;
+    font-size: 30px;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 .num-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding-bottom: 0;
-  height: 20vh;
-  margin-top: 10px;
-  margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 0;
+    height: 20vh;
+    margin-top: 10px;
+    margin-bottom: 0;
 }
 
 .label-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 0;
-  padding-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0;
+    padding-top: 0;
 }
 
 img {
-  height: 40px;
-  width: auto;
+    height: 40px;
+    width: auto;
 }
 
 #score {
-  font-size: 70px;
-  color: #ace76d;
-  font-weight: bold;
+    font-size: 70px;
+    color: #ace76d;
+    font-weight: bold;
 }
 
 #score-text {
-  font-size: 10px;
-  color: white;
+    font-size: 12px;
+    color: white;
 }
 
 #high {
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  margin-bottom: 0;
-  padding-bottom: 0;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 #count {
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  margin-right: 30px;
-  margin-bottom: 0;
-  padding-bottom: 0;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    margin-right: 30px;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
+
+#mode {
+    width: 60%;
+    height: 40px;
+    border-radius: 20px;
+    background-color: #FEFA9A;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    box-shadow: inset 2px -6px 6px rgba(0, 0, 0, 0.5);
+    transition: all 0.2s ease-in-out;
+    border: none;
+    outline: none;
+}
+
 </style>
