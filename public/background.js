@@ -113,12 +113,14 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                     const currentCounter = typeof data.counter === "number" ? data.counter : 0;
                     const updatedCounter = currentCounter - 2;
 
-                    pointLossSound();
 
                     chrome.storage.local.set({ counter: updatedCounter }, () => {
                         console.log("Counter decremented. New value:", updatedCounter);
 
-                        if (!data.muted) decreaseNotification();
+                        if (!data.muted) {
+                            decreaseNotification();
+                            pointLossSound();
+                        }
                     });
                 });
             }
