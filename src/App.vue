@@ -1,39 +1,42 @@
 <template>
-  <div id="app">
-    <header>
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    </header>
-    <main>
-      <h1>Locked In</h1>
+    <div id="app">
+        <header>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        </header>
+        <main>
+            <h1>Locked In</h1>
 
-      <div class="num-row">
-        <div id="count">
-          <img src="./images/points.webp" />
-          <p id="counter">{{ counter }}</p>
-        </div>
-        <div id="high">
-          <img src="./images/high.webp" />
-          <p id="score">{{ highScore }}</p>
-        </div>
-      </div>
-      <div class="label-row">
-        <p id="counterLabel">PRODUCTIVITY SCORE</p>
-        <p id="score-text">HIGH SCORE</p>
-      </div>
+            <div class="num-row">
+                <div id="count">
+                    <img src="./images/points.webp" />
+                    <p id="counter">{{ counter }}</p>
+                </div>
+                <div id="high">
+                    <img src="./images/high.webp" />
+                    <p id="score">{{ highScore }}</p>
+                </div>
+            </div>
 
-      <button id="mode" @click="toggleMode">{{ mode }}</button>
+            <div class="label-row">
+                <p id="counterLabel">PRODUCTIVITY SCORE</p>
+                <p id="score-text">HIGH SCORE</p>
+            </div>
 
-      <button @click="toggleBlacklistManager">
-        {{ showBlacklistManager ? "Close" : "Edit Blacklist" }}
-      </button>
+            <button id="mode" @click="toggleMode">{{ mode }}</button>
 
-      <button id="mute" @click="toggleMute">
-        {{ muted ? "Unmute" : "Mute" }}
-      </button>
+            <div id="options">
+                <button id="mute" @click="toggleMute">
+                    <img class="muteIcon" v-if="muted" src="./images/muted.png" />
+                    <img class="muteIcon" v-if="!muted" src="./images/unmuted.png" />
+                </button>
+                <button @click="toggleBlacklistManager">
+                    {{ showBlacklistManager ? "Close" : "Edit Blacklist" }}
+                </button>
+            </div>
 
-      <BlacklistManager v-if="showBlacklistManager" />
-    </main>
-  </div>
+            <BlacklistManager v-if="showBlacklistManager" />
+        </main>
+    </div>
 </template>
 
 <script>
@@ -117,6 +120,7 @@ export default {
 
 * {
     font-family: "Electrolize", serif;
+    cursor: pointer;
 }
 
 /*
@@ -235,6 +239,33 @@ img {
     transition: all 0.2s ease-in-out;
     border: none;
     outline: none;
+}
+
+#mode:hover {
+    opacity: 0.8;
+}
+
+#options {
+    display: flex;
+    justify-content: center;
+}
+
+#mute {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    margin-right: 20px;
+}
+
+#muteIcon {
+    height: 10px;
+    width: auto;
+    transition: all 0.2 ease-in-out;
+}
+
+#muteIcon:hover {
+    opacity: 0.5;
 }
 
 </style>
