@@ -1,19 +1,23 @@
 <template>
-  <div>
-    <h2>Blacklist Manager</h2>
-
-    <ul>
-      <li v-for="(url, index) in blacklist" :key="index">
-        {{ url }}
-        <button @click="removeFromBlacklist(url)">Remove</button>
-      </li>
-    </ul>
-
-    <div>
-      <input v-model="newBlacklistUrl" placeholder="Add URL to blacklist" />
-      <button @click="addToBlacklist(newBlacklistUrl)">Add to Blacklist</button>
+    <div id="manage">
+        <h2>Distracting Websites</h2>
+    
+        <div id="input">
+            <button @click="addToBlacklist(newBlacklistUrl)">
+                <img src="./images/add.png" />
+            </button>
+            <input v-model="newBlacklistUrl" @keyup.enter="addToBlacklist(newBlacklistUrl)" placeholder="Add URL to blacklist" />
+        </div>
+    
+        <ul>
+            <li v-for="(url, index) in blacklist" :key="index">
+                <button @click="removeFromBlacklist(url)">
+                    <img src="./images/delete.png" />                    
+                </button>
+                {{ url }}
+            </li>
+        </ul>
     </div>
-  </div>
 </template>
 
 <script>
@@ -79,3 +83,80 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+
+@import url("https://fonts.googleapis.com/css2?family=Electrolize&display=swap");
+
+* {
+    font-family: "Electrolize", sans-serif;
+    cursor: pointer;
+}
+
+#manage {
+    min-height: 100vh;
+    margin-top: 40px;
+}
+
+h2 {
+    width: 100%;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 20px;
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 10px;
+    padding: 0;
+}
+
+li {
+    text-decoration: none;
+    color: white;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+li button {
+    margin-right: 10px;
+}
+
+button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    outline: none;
+    margin-right: 10px;
+}
+
+#input button {
+    margin-left: 5px;
+}
+
+button:hover {
+    opacity: 80%;
+}
+
+img {
+    max-width: 20px;
+    height: auto;
+    cursor: pointer;
+    transition: all 0.2 ease-in-out;
+}
+
+#input {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    justify-content: center;
+    margin-bottom: 20px;
+    border: none;
+    outline: none;
+}
+</style>

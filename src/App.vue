@@ -139,11 +139,14 @@ html, body {
     display: flex;
     flex-direction: column;
     /*justify-content: center;*/
-    background-color: #374971;
+    /* background-color: #374971; dark blue background */
+    background-color: black;
     width: 300px;
     height: 300px;
     overflow-y: auto;
     margin-left: 0;
+    border: none;
+    outline: none;
 }
 
 #counter {
@@ -230,7 +233,10 @@ img {
     width: 60%;
     height: 40px;
     border-radius: 20px;
-    background-color: #FEFA9A;
+    /* background-color: #FEFA9A; bright yellow */
+    /* background-color: #EEDC82; warm gold 
+    background-color: #FFB347; orange */
+    background-color: #D1A3FF;
     font-size: 20px;
     font-weight: bold;
     margin-top: 10px;
