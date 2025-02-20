@@ -1,5 +1,5 @@
 //point loss sound
-async function pointLossSound(source = 'pointLoss.mp3', volume = 1) {
+async function pointLossSound(source = 'pointLoss.mp3', volume = 0.5) {
     try {
         await createOffscreen();
    
@@ -12,7 +12,7 @@ async function pointLossSound(source = 'pointLoss.mp3', volume = 1) {
 }
 
 //high score sound
-async function highScoreSound(source = 'highScore.mp3', volume = 1) {
+async function highScoreSound(source = 'highScore.mp3', volume = 0.5) {
     try {
         await createOffscreen();
    
@@ -25,7 +25,7 @@ async function highScoreSound(source = 'highScore.mp3', volume = 1) {
 }
 
 //coin increase sound
-async function coinSound(source = 'coinIncrease.mp3', volume = 1) {
+async function coinSound(source = 'coinIncrease.mp3', volume = 0.5) {
     try {
         await createOffscreen();
    
