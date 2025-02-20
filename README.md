@@ -1,6 +1,6 @@
 # Capstone Project: Locked In
 
-![image](https://github.com/user-attachments/assets/00db36ce-d89c-488e-83a4-a9a6fd546f5b)
+![Screenshot 2025-02-19 at 11 16 17 PM](https://github.com/user-attachments/assets/bed1dfdd-7955-4b4f-a4b2-a16957687cea)
 
 - This is a Chrome browser extension that gamifies productivity
 - It implements a point system that increments every 5 minutes of work
