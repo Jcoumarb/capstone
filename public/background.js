@@ -127,9 +127,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Initialize local storage of all variables
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false },
+    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null },
     () => {
-        console.log("Initialized: Mode off, counter at 0.");
+        console.log("Initialized all local storage");
     });
 });
 

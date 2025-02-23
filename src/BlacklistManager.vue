@@ -64,12 +64,65 @@ export default {
 
     //toggle locked
     toggleLocked() {
+        chrome.storage.local.get("password", async (data) => {
+            if (!data.password) {
+                this.setupPassword();
+            } else {
+                if (this.locked) {
+                    this.verifyPassword(data.password);
+                } else {
+                    chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
+                        if (response.success) {
+                            this.locked = response.locked;
+                        }
+                    });
+                }
+            }
+        });
+    },
+
+    setupPassword() {
+        const newPassword = prompt("Create a password:");
+        const confirmPassword = prompt("Confirm your password:");
+
+        if (newPassword !== confirmPassword) {
+            alert("Passwords do not match. Try again.");
+            return;
+        }
+
+        chrome.storage.local.set({ password: newPassword }, () => {
+            alert("Password set! You can now lock/unlock edits.");
+        });
+
         chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
             if (response.success) {
                 this.locked = response.locked;
             }
         });
     },
+
+    verifyPassword(stored) {
+        const enteredPassword = prompt("Enter your password to unlock:");
+        if (!enteredPassword) return;
+
+
+        if(enteredPassword !== stored) return;
+
+        chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
+            if (response.success) {
+                this.locked = response.locked;
+            }
+        });
+    },
+
+    /*
+    //hashes entered password
+    async hashPassword(password) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(password);
+        const hash = crypto.subtle.digest("SHA-256", data);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, "0")).join("");
+    },*/
 
     // Add a URL to the blacklist
     addToBlacklist(url) {
