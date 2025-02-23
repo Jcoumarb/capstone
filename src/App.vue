@@ -18,7 +18,7 @@
             </div>
 
             <div class="label-row">
-                <p id="counterLabel">PRODUCTIVITY SCORE</p>
+                <p id="counterLabel">FOCUS XP</p>
                 <p id="score-text">HIGH SCORE</p>
             </div>
 
@@ -156,12 +156,15 @@ html, body {
     background: linear-gradient(45deg, #00d4ff 70%, #7a00ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-left: 5px;
 }
 
 #counterLabel {
     font-size: 12px;
     color: white;
-    margin-right: 50px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 main {
@@ -189,11 +192,9 @@ h1 {
 }
 
 .label-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 0;
-    padding-top: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
 }
 
 img {
@@ -205,11 +206,15 @@ img {
     font-size: 70px;
     color: #ace76d;
     font-weight: bold;
+    margin-left: 5px;
 }
 
 #score-text {
     font-size: 12px;
     color: white;
+    width: 100%;
+    display: flex;
+    justify-content: center;
 }
 
 #high {

@@ -100,7 +100,7 @@ function decreaseNotification() {
     }, 5000);
 }
 
-// Decrement the counter if a blacklisted URL is visited
+// Decrement the counter if a blacklisted URL is visited (this is intentionally not subject to mute)
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
     if (changeInfo.url) {
         isBlacklisted(changeInfo.url, (matched) => {
@@ -116,11 +116,8 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
                     chrome.storage.local.set({ counter: updatedCounter }, () => {
                         console.log("Counter decremented. New value:", updatedCounter);
-
-                        if (!data.muted) {
-                            decreaseNotification();
-                            pointLossSound();
-                        }
+                        decreaseNotification();
+                        pointLossSound();
                     });
                 });
             }
@@ -130,9 +127,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Initialize local storage of all variables
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false},
+    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null },
     () => {
-        console.log("Initialized: Mode off, counter at 0.");
+        console.log("Initialized all local storage");
     });
 });
 
@@ -282,6 +279,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             chrome.storage.local.set({ muted: newMute }, () => {
                 console.log(`Mute set: ${newMute}`);
                 sendResponse({ success: true, muted: newMute });
+            });
+        });
+    
+        return true;
+    }
+});
+
+
+//toggle locked which is used to enable/disable edits to blacklisted URLs
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.action === "toggleLock") {
+        chrome.storage.local.get("locked", (data) => {
+            const newlock = !data.locked;
+            chrome.storage.local.set({ locked: newlock }, () => {
+                console.log(`Locked set: ${newlock}`);
+                sendResponse({ success: true, locked: newlock });
             });
         });
     
