@@ -1,8 +1,13 @@
 <template>
     <div id="manage">
-        <h2>Distracting Websites</h2>
+        <h2>
+            <button id="lock" @click="toggleLocked">
+                <img class="lockIcon" v-if="locked" src="./images/locked.png" />
+                <img class="lockIcon" v-if="!locked" src="./images/unlocked.png" />
+            </button>
+            Distracting Websites</h2>
     
-        <div id="input">
+        <div id="input" v-if="!locked">
             <button @click="addToBlacklist(newBlacklistUrl)">
                 <img src="./images/add.png" />
             </button>
@@ -11,7 +16,7 @@
     
         <ul>
             <li v-for="(url, index) in blacklist" :key="index">
-                <button @click="removeFromBlacklist(url)">
+                <button v-if="!locked" @click="removeFromBlacklist(url)">
                     <img src="./images/delete.png" />                    
                 </button>
                 {{ url }}
@@ -27,11 +32,13 @@ export default {
       blacklist: [], // Holds the current blacklist
       newBlacklistUrl: "", // Holds the URL to add to the blacklist
       counter: 0, // Holds the current counter value
+      locked: false,
     };
   },
   mounted() {
     this.fetchBlacklist();
     this.fetchCounter();
+    this.fetchLocked();
   },
   methods: {
     // Fetch the current blacklist from local storage
@@ -46,6 +53,22 @@ export default {
       chrome.storage.local.get({ counter: 0 }, (data) => {
         this.counter = data.counter;
       });
+    },
+
+    // Fetch the current locked value
+    fetchLocked() {
+        chrome.storage.local.get({ locked: false }, (data) => {
+            this.locked = data.locked;
+        });
+    },
+
+    //toggle locked
+    toggleLocked() {
+        chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
+            if (response.success) {
+                this.locked = response.locked;
+            }
+        });
     },
 
     // Add a URL to the blacklist
@@ -109,7 +132,7 @@ h2 {
 
 ul {
     list-style-type: none;
-    margin-left: 10px;
+    margin-left: 28px;
     padding: 0;
 }
 
@@ -144,7 +167,7 @@ button:hover {
 }
 
 img {
-    max-width: 20px;
+    max-width: 25px;
     height: auto;
     cursor: pointer;
     transition: all 0.2 ease-in-out;
@@ -158,5 +181,13 @@ img {
     margin-bottom: 20px;
     border: none;
     outline: none;
+}
+
+input {
+    width: 133px;
+}
+
+#lockIcon {
+    max-width: 55px;
 }
 </style>
