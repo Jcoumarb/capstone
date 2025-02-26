@@ -33,12 +33,23 @@ export default {
       newBlacklistUrl: "", // Holds the URL to add to the blacklist
       counter: 0, // Holds the current counter value
       locked: false,
+      invalidCredentialCount: 0,
     };
   },
   mounted() {
     this.fetchBlacklist();
     this.fetchCounter();
     this.fetchLocked();
+
+    chrome.storage.onChanged.addListener((changes) => {
+      if (changes.blacklist) {
+        this.blacklist = changes.blacklist.newValue;
+      }
+
+      if (changes.locked) {
+        this.locked = changes.locked.newValue;
+      }
+    });
   },
   methods: {
     // Fetch the current blacklist from local storage
@@ -101,12 +112,43 @@ export default {
         });
     },
 
+    resetPrompt() {
+        const reset = prompt("If you have forgot your password, you can reset the app by entering 'reset':");
+        const confirmReset = prompt("Confirm reset by entering 'reset'. This will reset your high score and all saved data:");
+
+        if (reset !== confirmReset) {
+            return;
+        }
+
+        if(reset !== "reset") {
+            return;
+        }
+
+        chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null}, () => {
+            alert("All app data has been reset");
+        });
+
+        /*chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
+            if (response.success) {
+                this.locked = response.locked;
+            }
+        });*/
+    },
+
     verifyPassword(stored) {
         const enteredPassword = prompt("Enter your password to unlock:");
         if (!enteredPassword) return;
 
 
-        if(enteredPassword !== stored) return;
+        // if password is entered incorrectly three times in a row reset prompt is given
+        if(enteredPassword !== stored) {
+            this.invalidCredentialCount ++;
+            
+            if(this.invalidCredentialCount >= 3) {
+                this.resetPrompt();
+            }
+            return;
+        }
 
         chrome.runtime.sendMessage({ action: "toggleLock" }, (response) => {
             if (response.success) {
