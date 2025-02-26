@@ -110,6 +110,15 @@ export default {
       if (changes.highScore) {
         this.highScore = changes.highScore.newValue;
       }
+
+      if (changes.muted) {
+        this.muted = changes.muted.newValue;
+      }
+
+      if (changes.isActive) {
+        this.isActive = changes.isActive.newValue;
+        this.mode = this.isActive ? "END SESSION" : "BEGIN WORK";
+      }
     });
   },
 };
