@@ -113,7 +113,7 @@ export default {
     },
 
     resetPrompt() {
-        const reset = prompt("If you have forgot your password, you can reset the app by entering 'reset':");
+        const reset = prompt("If you have forgotten your password, you can reset the app by entering 'reset':");
         const confirmReset = prompt("Confirm reset by entering 'reset'. This will reset your high score and all saved data:");
 
         if (reset !== confirmReset) {
@@ -124,7 +124,7 @@ export default {
             return;
         }
 
-        chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null}, () => {
+        chrome.storage.local.set({ isActive: false, counter: 0, muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null}, () => {
             alert("All app data has been reset");
         });
 
