@@ -114,7 +114,7 @@ export default {
 
     resetPrompt() {
         const reset = prompt("If you have forgotten your password, you can reset the app by entering 'reset':");
-        const confirmReset = prompt("Confirm reset by entering 'reset'. This will reset your high score and all saved data:");
+        const confirmReset = prompt("Confirm reset by entering 'reset'. This will reset your high score:");
 
         if (reset !== confirmReset) {
             return;
