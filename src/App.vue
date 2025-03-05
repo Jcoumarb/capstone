@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <div id="app" ref="app">
         <header>
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         </header>
@@ -34,7 +34,7 @@
                 </button>
             </div>
 
-            <BlacklistManager v-if="showBlacklistManager" />
+            <BlacklistManager v-if="showBlacklistManager"/>
         </main>
     </div>
 </template>
@@ -58,6 +58,13 @@ export default {
   methods: {
     toggleBlacklistManager() {
       this.showBlacklistManager = !this.showBlacklistManager;
+    
+      //scrolls into blacklist after section opens
+      this.$nextTick(() => {
+          if (this.showBlacklistManager) {
+              this.$refs.app.scrollTop = this.$refs.app.scrollHeight;
+          }
+      });
     },
     endSession() {
       // Send a message to the background script to reset the counter
