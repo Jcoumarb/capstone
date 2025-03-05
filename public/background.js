@@ -281,10 +281,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                 console.log(`breakCount incremented to: ${breakIncrease}`);
             });
 
+            let notified = false;
+
             if (data.onBreak) {
                 if(breakIncrease === 1) {
                     //end break Notification and counter reset and toggle onBreak
                     endBreakNotification();
+                    notified = true;
 
                     chrome.storage.local.set({ onBreak: false }, () => {
                         console.log(`Break has ended`);
@@ -298,6 +301,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                 if(breakIncrease === 6) {
                     //break notification and counter reset and toggle onBreak
                     startBreakNotification();
+                    notified = true;
 
                     chrome.storage.local.set({ onBreak: true }, () => {
                         console.log(`Break has started`);
@@ -326,18 +330,18 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 
                         //high score is only notified if it is the first time for the session
                         if (!data.highScoreNotified && !data.muted) {
-                            highScoreNotification();
+                            if (!notified) highScoreNotification();
                             highScoreSound();
 
                             chrome.storage.local.set({ highScoreNotified: true }, () => {
                                 console.log("HighScoreNotified set true");
                             });
                         } else if (!data.muted) {
-                            increaseNotification();
+                            if (!notified) increaseNotification();
                             coinSound();
                         }
                     } else if (!data.muted) {
-                        increaseNotification();
+                        if (!notified) increaseNotification();
                         coinSound();
                     }
 
