@@ -68,6 +68,70 @@ function isBlacklisted(url, callback) {
     });
 }
 
+//end break notification
+function endBreakNotification() {
+    const id = "notif";
+
+    chrome.notifications.create(
+        id,
+        {
+            type: "basic",
+            iconUrl: "lockedIn.png",
+            title: "It's Time to lock in!",
+            message:"Your break is now over",
+        },
+        (notificationId) => {
+            if (chrome.runtime.lastError) {
+                console.error("Notification error:", chrome.runtime.lastError.message);
+            } else {
+                console.log("Notification created with ID:", notificationId);
+            }
+        }
+    );
+
+    setTimeout(() => {
+        chrome.notifications.clear(id, (wasCleared) => {
+            if (wasCleared) {
+                console.log(`Notification ${id} cleared`);
+            } else {
+                console.log(`Failed to clear notification ${id}`);
+            }
+        });
+    }, 5000);
+}
+
+
+function startBreakNotification() {
+    const id = "notif";
+
+    chrome.notifications.create(
+        id,
+        {
+            type: "basic",
+            iconUrl: "lockedIn.png",
+            title: "Break Time!",
+            message:"Great focus! You can now visit distracting websites for 5 minutes",
+        },
+        (notificationId) => {
+            if (chrome.runtime.lastError) {
+                console.error("Notification error:", chrome.runtime.lastError.message);
+            } else {
+                console.log("Notification created with ID:", notificationId);
+            }
+        }
+    );
+
+    setTimeout(() => {
+        chrome.notifications.clear(id, (wasCleared) => {
+            if (wasCleared) {
+                console.log(`Notification ${id} cleared`);
+            } else {
+                console.log(`Failed to clear notification ${id}`);
+            }
+        });
+    }, 5000);
+}
+
 //function to create notification on point decrease
 function decreaseNotification() {
     const id = "notif";
@@ -108,8 +172,10 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
                 console.log("Blacklisted URL visited:", changeInfo.url);
 
                 // Decrement counter
-                chrome.storage.local.get({ counter: 0, isActive: false, muted: false }, (data) => {
+                chrome.storage.local.get({ counter: 0, isActive: false, muted: false , onBreak: false }, (data) => {
                     if (!data.isActive) return;
+                    if (data.onBreak) return;
+
                     const currentCounter = typeof data.counter === "number" ? data.counter : 0;
                     const updatedCounter = currentCounter - 2;
 
@@ -127,7 +193,7 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
 
 // Initialize local storage of all variables
 chrome.runtime.onInstalled.addListener(() => {
-    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null },
+    chrome.storage.local.set({ isActive: false, counter: 0, blacklist: [], muted: false, onBreak: false, highScore: 0, highScoreNotified: false, locked: false, password: null , breakCount: 0 },
     () => {
         console.log("Initialized all local storage");
     });
@@ -203,13 +269,47 @@ chrome.alarms.onAlarm.addListener((alarm) => {
     if (alarm.name === "incrementCounter") {
         console.log("Alarm triggered: incrementCounter");
 
-        chrome.storage.local.get(["isActive", "counter", "muted", "highScore", "highScoreNotified"], (data) => {
+        chrome.storage.local.get(["isActive", "counter", "muted", "highScore", "highScoreNotified", "onBreak", "breakCount" ], (data) => {
             if (!data.isActive) {
                 console.log("Mode is inactive, skipping increment.");
                 return;
             }
 
-            // Check the idle state
+            //increment breakCount and follow logic of on break
+            const breakIncrease = (data.breakCount || 0) + 1;
+            chrome.storage.local.set({ breakCount: breakIncrease }, () => {
+                console.log(`breakCount incremented to: ${breakIncrease}`);
+            });
+
+            if (data.onBreak) {
+                if(breakIncrease === 1) {
+                    //end break Notification and counter reset and toggle onBreak
+                    endBreakNotification();
+
+                    chrome.storage.local.set({ onBreak: false }, () => {
+                        console.log(`Break has ended`);
+                    });
+ 
+                    chrome.storage.local.set({ breakCount: 0 }, () => {
+                        console.log(`Break has ended`);
+                    });
+                }
+            } else {
+                if(breakIncrease === 6) {
+                    //break notification and counter reset and toggle onBreak
+                    startBreakNotification();
+
+                    chrome.storage.local.set({ onBreak: true }, () => {
+                        console.log(`Break has started`);
+                    });
+ 
+                    chrome.storage.local.set({ breakCount: 0 }, () => {
+                        console.log(`Break has started`);
+                    });
+                }
+            }
+
+            // Check the idle state and only increases points if active
             chrome.idle.queryState(60, (state) => {
                 if (state === "active") {
                     //increase counter
@@ -218,12 +318,13 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                         console.log(`Counter incremented to: ${newCounter}`);
                     });
 
-                    //if there is a new high score, it is set and notified
+                    //if there is a new high score, it is set 
                     if (newCounter > data.highScore) {
                         chrome.storage.local.set({ highScore: newCounter }, () => {
                             console.log(`New high score of ${newCounter}`);
                         });
 
+                        //high score is only notified if it is the first time for the session
                         if (!data.highScoreNotified && !data.muted) {
                             highScoreNotification();
                             highScoreSound();
@@ -258,7 +359,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 console.log(`Mode changed: ${newMode ? "Active" : "Inactive"}`);
                 
                 if (newMode) {
-                    chrome.alarms.create("incrementCounter", { periodInMinutes: 0.5 });
+                    chrome.alarms.create("incrementCounter", { periodInMinutes: 5 });
                 } else {
                     chrome.alarms.clear("incrementCounter");
                 }
@@ -306,12 +407,21 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (message.action === "resetCounter") {
         chrome.storage.local.set({ counter: 0 }, () => {
-            console.log("Counter reset to zero.");
+            console.log("Counter variable reset");
             sendResponse({ success: true });
         });
 
         chrome.storage.local.set({ highScoreNotified: false }, () => {
-            console.log("highScoreNotified set false");
+            console.log("highScoreNotified viarbale reset");
+        });
+
+
+        chrome.storage.local.set({ onBreak: false }, () => {
+                console.log(`onBreak variable reset`);
+        });
+ 
+        chrome.storage.local.set({ breakCount: 0 }, () => {
+            console.log(`breakCount variable reset`);
         });
 
         return true;
