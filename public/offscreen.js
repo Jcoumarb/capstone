@@ -1,3 +1,13 @@
+// Listen for message of end break sound
+chrome.runtime.onMessage.addListener(msg => {
+    if (msg.type === "endBreakMessage") playAudio(msg.play);
+});
+
+// Listen for message of start break sound
+chrome.runtime.onMessage.addListener(msg => {
+    if (msg.type === "startBreakMessage") playAudio(msg.play);
+});
+
 // Listen for message of coin sound
 chrome.runtime.onMessage.addListener(msg => {
     if (msg.type === "coinMessage") playAudio(msg.play);

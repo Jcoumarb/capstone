@@ -1,3 +1,29 @@
+//end break sound
+async function endBreakSound(source = 'endBreak.mp3', volume = 0.5) {
+    try {
+        await createOffscreen();
+   
+        // Send the message and handle potential errors
+        await chrome.runtime.sendMessage({ play: { source, volume }, type: "endBreakMessage" })
+            .catch(() => {});
+    } catch (error) {
+        //no logging as it works
+    }
+}
+
+//start break sound
+async function startBreakSound(source = 'startBreak.mp3', volume = 0.5) {
+    try {
+        await createOffscreen();
+   
+        // Send the message and handle potential errors
+        await chrome.runtime.sendMessage({ play: { source, volume }, type: "startBreakMessage" })
+            .catch(() => {});
+    } catch (error) {
+        //no logging as it works
+    }
+}
+
 //point loss sound
 async function pointLossSound(source = 'pointLoss.mp3', volume = 0.5) {
     try {
@@ -287,6 +313,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                 if(breakIncrease === 1) {
                     //end break Notification and counter reset and toggle onBreak
                     endBreakNotification();
+                    endBreakSound();
                     notified = true;
 
                     chrome.storage.local.set({ onBreak: false }, () => {
@@ -301,6 +328,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                 if(breakIncrease === 6) {
                     //break notification and counter reset and toggle onBreak
                     startBreakNotification();
+                    startBreakSound();
                     notified = true;
 
                     chrome.storage.local.set({ onBreak: true }, () => {
@@ -329,19 +357,19 @@ chrome.alarms.onAlarm.addListener((alarm) => {
                         });
 
                         //high score is only notified if it is the first time for the session
-                        if (!data.highScoreNotified && !data.muted) {
-                            if (!notified) highScoreNotification();
+                        if (!data.highScoreNotified && !data.muted && !notified) {
+                            highScoreNotification();
                             highScoreSound();
 
                             chrome.storage.local.set({ highScoreNotified: true }, () => {
                                 console.log("HighScoreNotified set true");
                             });
-                        } else if (!data.muted) {
-                            if (!notified) increaseNotification();
+                        } else if (!data.muted && !notified) {
+                            increaseNotification();
                             coinSound();
                         }
-                    } else if (!data.muted) {
-                        if (!notified) increaseNotification();
+                    } else if (!data.muted && !notified) {
+                        increaseNotification();
                         coinSound();
                     }
 
