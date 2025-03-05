@@ -269,7 +269,11 @@ img {
 }
 
 #mode:hover {
-    opacity: 0.8;
+    filter: brightness(1.2);
+    width: 65%;
+    height: 50px;
+    border-radius: 30px;
+    font-size: 22px;
 }
 
 #options {
@@ -284,6 +288,7 @@ img {
     padding: 0;
     cursor: pointer;
     margin-right: 20px;
+    opacity: 0.7;
 }
 
 #muteIcon {
@@ -294,7 +299,7 @@ img {
 }
 
 #mute:hover {
-    opacity: 0.8;
+    opacity: 1;
 }
 
 #showBlack {
@@ -305,9 +310,10 @@ img {
     color: white;
     border-radius: 5px;
     border: 2px solid white;
+    opacity: 0.7;
 }
 
 #showBlack:hover {
-    opacity: 0.8;
+    opacity: 1;
 }
 </style>

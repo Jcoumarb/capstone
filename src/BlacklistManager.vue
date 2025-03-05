@@ -251,6 +251,7 @@ button {
     cursor: pointer;
     outline: none;
     margin-right: 10px;
+    opacity: 0.7;
 }
 
 #input button {
@@ -258,7 +259,7 @@ button {
 }
 
 button:hover {
-    opacity: 80%;
+    opacity: 1;
 }
 
 img {
