@@ -1,6 +1,6 @@
 {
 	"name": "Locked In: Gamify Your Productivity",
-	"version": "1.0",
+	"version": "1.1",
 	"description": "This extention gamifies productivity via a points system",
 	"manifest_version": 3,
 	"background": {
@@ -12,7 +12,7 @@
 		"default_title": "Locked In",
 		"default_icon": "lockedIn.png"
 	},
-	"permissions": ["alarms", "storage", "idle","tabs", "notifications", "scripting", "offscreen"],
+	"permissions": ["alarms", "storage", "idle","tabs", "notifications", "offscreen"],
 	"host_permissions": ["<all_urls>"],
 	"web_accessible_resources": [
 		{
